@@ -1,5 +1,7 @@
 #include "SubController.h"
 
+//ToDo: Add support for latching buttons
+
 SubController::SubController(int type, int pin, int a = false, int b = false, int c = false, int d = false){
   this->type = type;
   this->pin = pin;
