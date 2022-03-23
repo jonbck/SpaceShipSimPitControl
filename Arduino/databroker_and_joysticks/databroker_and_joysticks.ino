@@ -4,9 +4,9 @@
 // NOTE: This sketch file is for use with Arduino Leonardo and
 //       Arduino Micro only.
 //
-// Working: Local joystick
-//          Data gathering (not all data gathered yet though)
-// ToDo:    Data broker towards other devices
+// Working: Joystick
+//          Data gathering and data transmission to other arduinos
+//          Data gathering from computer
 //--------------------------------------------------------------------
 
 #define JSON_SIZE 1000
@@ -21,10 +21,12 @@
 
 #define arr_len( x )  ( sizeof( x ) / sizeof( *x ) )
 
+const int noButtonsOnJoystick = 30;
+
 // Create Joystick object
 /*
 Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, 
-  JOYSTICK_TYPE_MULTI_AXIS, 2, 0,       // Buttons, d-pads
+  JOYSTICK_TYPE_MULTI_AXIS, noButtonsOnJoystick, 0,       // Buttons, d-pads
   true, true, true, true, true, true,   // X, Y, Z, Rx, Ry, Rz
   true, true, false, false, false);     // Rudder seems to be same as one of the rotations
 */
@@ -42,7 +44,42 @@ JoyInput stickThrottle(JOY_STICK, A6, 350, 531, 532, 720); // 333; 531; 532; 729
 JoyInput buttonF1(JOY_BUTTON, 5);
 JoyInput buttonF2(JOY_BUTTON, 6);
 //Distance buttons
-bool buttons[30];
+
+
+
+class VirtuJoyButtons {
+  private:
+    bool current;
+    bool inputHasChanged;
+
+  public:
+    VirtuJoyButtons(){
+      this->current = false;
+      this->inputHasChanged = false;
+    }
+      
+    getValue(){
+      return this->current;
+    }
+
+    setValue(bool value){
+      if(value != this->current){
+        this->current = value;
+        this->inputHasChanged = true;
+      }
+    }
+
+    hasChanged(){
+      if(this->inputHasChanged){
+        this->inputHasChanged = false;
+        return true;
+      }else{
+        return false;
+      }
+    }
+};
+
+VirtuJoyButtons buttons[30];
 
 // Setup Node RED connections
 //Data gatherer
@@ -87,14 +124,13 @@ void setup() {
 
 }
 
-
 void loop() {
   // Read input changes from devices
   dataHandler.request(SUB_CONTROLLER_FSD, 1);
-  buttons[0] = dataHandler.a;
-  buttons[1] = dataHandler.b;
-  buttons[2] = dataHandler.c;
-  buttons[3] = dataHandler.d;
+  buttons[0].setValue(dataHandler.a);
+  buttons[1].setValue(dataHandler.b);
+  buttons[2].setValue(dataHandler.c);
+  buttons[3].setValue(dataHandler.d);
 
   //Do this for every device
   //Either just add it to the joystick, or add a function to detect changes and then add it to the joystick.
@@ -166,6 +202,16 @@ void setJoyStickValues(){
     Serial.print("QWERTY");
   }  
   */
+
+  for(int i = 0; i < arr_len(buttons); i++){
+    //Serial.print(buttons[i].getValue());
+    if(buttons[i].hasChanged()){
+      //Joystick.setButton(i+2, buttons[i].getValue());
+      Serial.print(i);
+      Serial.print(": ");
+      Serial.println(buttons[i].getValue());
+    }
+  }
 }
 
 void gameStateFromNodeRED(){
