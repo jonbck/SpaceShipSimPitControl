@@ -18,8 +18,8 @@ class JoyInput {
   public:
     JoyInput(int type, int pin, int low = 0, int midlow = 0, int midhigh = 0, int high = 0);
     void getPin();
-    void getValue();
-    void hasChanged();
+    int getValue();
+    bool hasChanged();
     void readValue();
     
 };

@@ -21,10 +21,10 @@ JoyInput::JoyInput(int type, int pin, int low = 0, int midlow = 0, int midhigh =
 void JoyInput::getPin(){
   return this->pin;
 }
-void JoyInput::getValue(){
+int JoyInput::getValue(){
   return this->current;
 }
-void JoyInput::hasChanged(){
+bool JoyInput::hasChanged(){
   if(this->inputHasChanged){
     this->inputHasChanged = false;
     return true;

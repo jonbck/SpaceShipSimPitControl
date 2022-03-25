@@ -12,9 +12,9 @@
 #define JSON_SIZE 1000
 
 #include <Wire.h>
-//#include <Joystick.h>
-//#include <Mouse.h>
-//#include <Keyboard.h>
+#include <Joystick.h>
+#include <Mouse.h>
+#include <Keyboard.h>
 #include "JoyInput.h"
 #include "GameState.h"
 #include "DataHandler.h"
@@ -24,12 +24,11 @@
 const int noButtonsOnJoystick = 30;
 
 // Create Joystick object
-/*
-Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, 
-  JOYSTICK_TYPE_MULTI_AXIS, noButtonsOnJoystick, 0,       // Buttons, d-pads
-  true, true, true, true, true, true,   // X, Y, Z, Rx, Ry, Rz
-  true, true, false, false, false);     // Rudder seems to be same as one of the rotations
-*/
+
+Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,
+                   JOYSTICK_TYPE_MULTI_AXIS, noButtonsOnJoystick + 2, 0,     // Buttons, d-pads
+                   true, true, true, true, true, true,   // X, Y, Z, Rx, Ry, Rz
+                   true, true, false, false, false);     // Rudder see§ms to be same as one of the rotations
 
 // Create Sticks
 JoyInput stickX(JOY_STICK, A0, 0, 490, 530, 1020);  // 0; 512; 1023
@@ -53,27 +52,27 @@ class VirtuJoyButtons {
     bool inputHasChanged;
 
   public:
-    VirtuJoyButtons(){
+    VirtuJoyButtons() {
       this->current = false;
       this->inputHasChanged = false;
     }
-      
-    getValue(){
+
+    getValue() {
       return this->current;
     }
 
-    setValue(bool value){
-      if(value != this->current){
+    setValue(bool value) {
+      if (value != this->current) {
         this->current = value;
         this->inputHasChanged = true;
       }
     }
 
-    hasChanged(){
-      if(this->inputHasChanged){
+    hasChanged() {
+      if (this->inputHasChanged) {
         this->inputHasChanged = false;
         return true;
-      }else{
+      } else {
         return false;
       }
     }
@@ -83,44 +82,42 @@ VirtuJoyButtons buttons[30];
 
 // Setup Node RED connections
 //Data gatherer
-char data[20] = "";
+char data[100];
 int dataCurrentPosition = 0;
+bool readyToInterpret = false;
 
 DataHandler dataHandler(12);
 
 //Setup Gamestate object
 GameState gameState;
- 
+
 void setup() {
   // Safety pin. Connect 13 to make sure no mouse/keyboard messes up when reprogramming.
   pinMode(13, INPUT_PULLUP);
-  while(digitalRead(13) == LOW){  }
+  while (digitalRead(13) == LOW) {  }
 
-//  Mouse.end();
-//  Keyboard.end();
+  //  Mouse.end();
+  //  Keyboard.end();
   Wire.begin(); // join i2c bus (address optional for master)
   Serial.begin(9600);
 
   // Setup slave controllers
 
   // Setup local joysticks and buttons
-  /*
   Joystick.setXAxisRange(0, 255);
   Joystick.setYAxisRange(0, 255);
   Joystick.setZAxisRange(0, 255);
   Joystick.setRxAxisRange(0, 255);
   Joystick.setRyAxisRange(0, 255);
   Joystick.setRzAxisRange(0, 255);
-  Joystick.setThrottleRange(0, 255); 
+  Joystick.setThrottleRange(0, 255);
   //  Joystick.setRudderRange(0, 255);      // This probably would clash with one of the above
   //  Joystick.setAcceleratorRange(0, 255);
   //  Joystick.setBrakeRange(0, 255);
   //  Joystick.setSteeringRange(0, 255);
 
-
   // Setup gamepad(s)
-    Joystick.begin();
-*/
+  Joystick.begin();
 
 }
 
@@ -134,7 +131,7 @@ void loop() {
 
   //Do this for every device
   //Either just add it to the joystick, or add a function to detect changes and then add it to the joystick.
-  
+
   // Read input from directly connected buttons and joysticks
   readJoyStickPinValues();
 
@@ -142,23 +139,23 @@ void loop() {
 
   // Update gamepad output
   setJoyStickValues();
-  
+
   // add changes from slave devices,
 
   // Read game state from NodeRED
   gameStateFromNodeRED();
 
-    //Update state object
+  //Update state object
 
   // Output data to secondary devices
   // FSD
   byte sendByte = 0;
   sendByte =  (gameState.fsdCooldown * 1) +
-              (gameState.fsdMasslocked * 2) + 
-              (gameState.fsdCharging * 4) + 
-              (gameState.superCruice * 8) + 
+              (gameState.fsdMasslocked * 2) +
+              (gameState.fsdCharging * 4) +
+              (gameState.superCruice * 8) +
               (gameState.fsdJump * 16);
-              
+
   Wire.beginTransmission(8); // transmit to device #8
   Wire.write(sendByte);              // sends one byte
   Wire.endTransmission();    // stop transmitting
@@ -166,11 +163,11 @@ void loop() {
 
   //Serial.println(gameState.isDocked());
   //Serial.println(gameState.fireGroup);
-  
+
   delay(50);
 }
 
-void readJoyStickPinValues(){
+void readJoyStickPinValues() {
   stickX.readValue();
   stickY.readValue();
   stickZ.readValue();
@@ -183,8 +180,7 @@ void readJoyStickPinValues(){
   buttonF2.readValue();
 }
 
-void setJoyStickValues(){
-  /*
+void setJoyStickValues() {
   Joystick.setXAxis(stickX.getValue());
   Joystick.setYAxis(stickY.getValue());
   Joystick.setZAxis(stickZ.getValue());
@@ -193,83 +189,168 @@ void setJoyStickValues(){
   Joystick.setRzAxis(stickRz.getValue());
   Joystick.setThrottle(stickThrottle.getValue());
 
-  if(buttonF1.hasChanged()){
+  if (buttonF1.hasChanged()) {
     Joystick.setButton(0, buttonF1.getValue());
     Serial.print("QWERTY");
   }
-  if(buttonF2.hasChanged()){
+  if (buttonF2.hasChanged()) {
     Joystick.setButton(1, buttonF2.getValue());
     Serial.print("QWERTY");
-  }  
-  */
+  }
 
-  for(int i = 0; i < arr_len(buttons); i++){
+  for (int i = 0; i < arr_len(buttons); i++) {
     //Serial.print(buttons[i].getValue());
-    if(buttons[i].hasChanged()){
-      //Joystick.setButton(i+2, buttons[i].getValue());
-      Serial.print(i);
-      Serial.print(": ");
-      Serial.println(buttons[i].getValue());
+    if (buttons[i].hasChanged()) {
+      Joystick.setButton(i + 2, buttons[i].getValue());
+      //Serial.print(i);
+      //Serial.print(": ");
+      //Serial.println(buttons[i].getValue());
     }
   }
 }
 
-void gameStateFromNodeRED(){
-  if (Serial.available() > 0){
-    bool readyToInterpret = false;
+void gameStateFromNodeRED() {
+  if (Serial.available() > 0) {
     while (Serial.available() > 0) {
       data[dataCurrentPosition] = Serial.read();
-      if(data[dataCurrentPosition] == '{' && dataCurrentPosition != 0){
+      //If a new one starts. Start over.
+      if (data[dataCurrentPosition] == '{') {
+        for(int i = 0; i < arr_len(data); i++){
+          data[i] = ' ';
+        }
         dataCurrentPosition = 0;
-        data[0] = '{';
-      }      
+      }
 
-      if(data[dataCurrentPosition] == '}'){
-        dataCurrentPosition = 0;
+      //If end reached, prepare for interpretation
+      if (data[dataCurrentPosition] == '}' || data[dataCurrentPosition] == ',') {
         readyToInterpret = true;
         break;
       }
       dataCurrentPosition++;
-      if(dataCurrentPosition > 20){
+      //Instead of overflow, start over
+      if (dataCurrentPosition > arr_len(data)) {
         dataCurrentPosition = 0;
       }
     }
-    
-//  char data[20] = "{\"firegroup\":2}";
-//  if(1){
-    if(readyToInterpret){
-      if(data[0] == '{'){
-        char key[20] = "";
-        char val[20] = "";
-        int breakPlacement = 0;
-        for (int i = 1; i < arr_len(data); i++) {
-          if(data[i] == ':'){
-            breakPlacement = i;
-            break;
+
+    if (readyToInterpret) {
+      readyToInterpret = false;
+      char key[arr_len(data)] = "";
+      char val[arr_len(data)] = "";
+      int keyCurrentPosition = 0;
+      int valCurrentPosition = 0;
+      int breakPlacement = 0;
+
+      //Find the break point
+      for (int i = 0; i < dataCurrentPosition; i++) {
+        if (data[i] == ':') {
+          breakPlacement = i;
+          break;
+        }
+      }
+      if (breakPlacement != 0) {
+        for (int i = 0; i < breakPlacement; i++) {
+          if(data[i] != '{' && data[i] != ' ' && data[i] != ',' && data[i] != '\"' && data[i] != '[' && data[i] != ']'){
+            key[keyCurrentPosition] = data[i];
+            keyCurrentPosition++;
           }
         }
-        if(breakPlacement != 0){
-          for(int i = 0; i < breakPlacement-3; i++){
-            key[i] = data[i+2];
+        for (int i = breakPlacement+1; i < dataCurrentPosition; i++) {
+          if(data[i] == '}' || data[i] == ','){ 
+            break;
           }
-          for(int i = breakPlacement; i < arr_len(data); i++){
-            if(data[i+1] == '}'){
-              break;
-            }
-            val[i-breakPlacement] = data[i+1];
+          if(data[i] != '{' && data[i] != ' ' && data[i] != ',' && data[i] != '\"' && data[i] != '[' && data[i] != ']'){
+            val[valCurrentPosition] = data[i];
+            valCurrentPosition++;
+          }
+        }
+        Serial.print("[ ");
+        Serial.print(key);
+        Serial.print(" | ");
+        Serial.print(val);
+        Serial.println(" ]");
+        
+        gameState.interpretSerialData(key, val);      // Function in Game State
+      }
+      for(int i = 0; i < arr_len(data); i++){
+        data[i] = ' ';
+      }
+      dataCurrentPosition = 0;
+      breakPlacement = 0;
+      key[0]='\0';
+      val[0]='\0';
+    }
+  }  
+}
+
+/* OLD VERSION
+void gameStateFromNodeRED() {
+  if (Serial.available() > 0) {
+    bool readyToInterpret = false;
+    while (Serial.available() > 0) {
+      data[dataCurrentPosition] = Serial.read();
+      if (data[dataCurrentPosition] == '{' && dataCurrentPosition != 0) {
+        dataCurrentPosition = 0;
+        data[0] = '{';
+      }
+
+      if (data[dataCurrentPosition] == '}') {
+        dataCurrentPosition = 0;
+        readyToInterpret = true;
+        break;
+      }
+      if (data[dataCurrentPosition] == ',') {
+        dataCurrentPosition = 0;
+        readyToInterpret = true;
+        break;
+      }    
+      dataCurrentPosition++;
+      if (dataCurrentPosition > 20) {
+        dataCurrentPosition = 0;
+      }
+    }
+
+    //  char data[20] = "{\"firegroup\":2}";
+    //  if(1){
+    if (readyToInterpret) {
+      char key[20] = "";
+      char val[20] = "";
+      int keyCurrentPosition = 0;
+      int valCurrentPosition = 0;
+      int breakPlacement = 0;
+      
+      for (int i = 1; i < arr_len(data); i++) {
+        if (data[i] == ':') {
+          breakPlacement = i;
+          break;
+        }
+      }
+      if (breakPlacement != 0) {
+        for (int i = 0; i < breakPlacement; i++) {
+          if(data[i] != '{' && data[i] != ' ' && data[i] != ','){
+            key[keyCurrentPosition] = data[i + 2]; 
+            keyCurrentPosition++;
+          }
+        }
+        for (int i = breakPlacement; i < arr_len(data); i++) {
+          if(data[i] == '}' || data[i] == ','){ 
+            break;
+          }
+          if(data[i] != '{' && data[i] != ' ' && data[i]){
+            val[valCurrentPosition] = data[i];
+            valCurrentPosition++;
           }
         }
         gameState.interpretSerialData(key, val);      // Function in Game State
       }
     }
-    gameState.testOutput();
   }
 }
-
+*/
 
 /*  Transmit Data, example code.
 
- 
+
   //Transmit data to sub-controllers
   Wire.beginTransmission(9); // transmit to device #8
   Wire.write(c);              // sends one byte
@@ -285,4 +366,4 @@ void gameStateFromNodeRED(){
   while (Wire.available()) { // slave may send less than requested
     c = Wire.read(); // receive a byte as character
   }
- */
+*/
