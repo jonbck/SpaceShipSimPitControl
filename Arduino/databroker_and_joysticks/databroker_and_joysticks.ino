@@ -129,6 +129,16 @@ void loop() {
   buttons[2].setValue(dataHandler.c);
   buttons[3].setValue(dataHandler.d);
 
+  dataHandler.request(SUB_CONTROLLER_HARDPOINTS, 1);
+  buttons[4].setValue(dataHandler.a);
+  buttons[5].setValue(dataHandler.b);
+  gameState.controllerArm1 = dataHandler.c;
+  gameState.controllerArm1 = dataHandler.d;
+  buttons[6].setValue(dataHandler.e);
+  buttons[7].setValue(dataHandler.f);
+  buttons[8].setValue(dataHandler.g);
+  buttons[9].setValue(dataHandler.h);
+  
   //Do this for every device
   //Either just add it to the joystick, or add a function to detect changes and then add it to the joystick.
 
@@ -156,7 +166,17 @@ void loop() {
               (gameState.superCruice * 8) +
               (gameState.fsdJump * 16);
 
-  Wire.beginTransmission(8); // transmit to device #8
+  Wire.beginTransmission(SUB_CONTROLLER_FSD); // transmit to device #8
+  Wire.write(sendByte);              // sends one byte
+  Wire.endTransmission();    // stop transmitting
+
+  sendByte = 0;
+  sendByte =  (gameState.hudInAnalysis * 1) +
+              (gameState.hardpointsDeployed * 2) +
+              (gameState.controllerArm1 * 4) +
+              (gameState.controllerArm2 * 8);
+
+  Wire.beginTransmission(SUB_CONTROLLER_HARDPOINTS); // transmit to device #8
   Wire.write(sendByte);              // sends one byte
   Wire.endTransmission();    // stop transmitting
 
@@ -188,7 +208,7 @@ void setJoyStickValues() {
   Joystick.setRyAxis(stickRy.getValue());
   Joystick.setRzAxis(stickRz.getValue());
   Joystick.setThrottle(stickThrottle.getValue());
-
+  
   if (buttonF1.hasChanged()) {
     Joystick.setButton(0, buttonF1.getValue());
     Serial.print("QWERTY");

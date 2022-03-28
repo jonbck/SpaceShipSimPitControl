@@ -9,6 +9,8 @@ class GameState{
 //    bool srvHighBeam;
     
   public:  
+
+    // Game environment variables
     bool docked;
     bool landed;
     bool landingGearDown;
@@ -35,6 +37,10 @@ class GameState{
     bool fsdJump;
     bool srvHighBeam;
     byte fireGroup;
+
+    // Game controller variables
+    bool controllerArm1 = false;
+    bool controllerArm2 = false;
 
     GameState();
     void GameState::testOutput();

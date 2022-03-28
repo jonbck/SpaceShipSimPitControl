@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #define SUB_CONTROLLER 8
 #define SUB_CONTROLLER_FSD 8
+#define SUB_CONTROLLER_HARDPOINTS 9
 
 class DataHandler {
   
