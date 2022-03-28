@@ -6,19 +6,19 @@ SubController hudLight(JOY_DATA_LED, 4);
 SubController hardpointsLight(JOY_DATA_LED, 5);
 SubController arm1Light(JOY_DATA_LED, 6);
 SubController arm2Light(JOY_DATA_LED, 7);
-SubController heatSinkLight(JOY_DATA_LED, 12);
+SubController heatSinkLight(JOY_DATA_LED, 1);
 SubController shieldCellLight(JOY_DATA_LED, 13);
 SubController chaffLauncherLight(JOY_DATA_LED, A0);
 SubController chargeEcmLight(JOY_DATA_LED, A1);
 
-SubController hudSwitch(JOY_BUTTON, A2);
-SubController hardpointsSwitch(JOY_BUTTON, A3);
-SubController arm1Switch(JOY_BUTTON, A4);
-SubController arm2Switch(JOY_BUTTON, A5);
-SubController heatSinkButton(JOY_BUTTON, 8);
-SubController shieldCellButton(JOY_BUTTON, 9);
-SubController chaffLauncherButton(JOY_BUTTON, 10);
-SubController chargeEcmButton(JOY_BUTTON, 11);
+SubController hudSwitch(JOY_BUTTON, 8);
+SubController hardpointsSwitch(JOY_BUTTON, 9);
+SubController arm1Switch(JOY_BUTTON, 11);
+SubController arm2Switch(JOY_BUTTON, 12);
+SubController heatSinkButton(JOY_BUTTON, A2);
+SubController shieldCellButton(JOY_BUTTON, A3);
+SubController chaffLauncherButton(JOY_BUTTON, A4);
+SubController chargeEcmButton(JOY_BUTTON, A5);
 DataHandler dataHandler(12);
 
 void setup() {
@@ -68,7 +68,7 @@ void receiveEvent(int bytesReceived) {
 }
 
 void requestEvent() {
-  if(hudLight.getValue() != hudSwitch.getValue()){
+  if(hudLight.getValue() == hudSwitch.getValue()){
       dataHandler.a = true;
   }else{
       dataHandler.a = false;    
