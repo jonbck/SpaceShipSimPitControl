@@ -1,3 +1,9 @@
+/*
+ * ToDo:  HUD registers "backwards" (it's pressed until switched on). Turn it around
+ *        Move logic to the databroker. Just handle buttonpresses and lights here.
+ *          Mainly, when a switch is switched. Change it's value instead of sending a keypress depending on relation to light. Move light stuff to databroker
+ */
+
 #include <Wire.h>
 #include "SubController.h"
 #include "DataHandler.h"

@@ -4,9 +4,8 @@
 // NOTE: This sketch file is for use with Arduino Leonardo and
 //       Arduino Micro only.
 //
-// Working: Joystick
-//          Data gathering and data transmission to other arduinos
-//          Data gathering from computer
+// ToDo:  Move logic from sub devices (mainly hardpoint switches) to here
+//        Prepare to make logic in one place, to make it easier to switch between games/modes
 //--------------------------------------------------------------------
 
 #define JSON_SIZE 1000
