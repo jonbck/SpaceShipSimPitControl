@@ -26,7 +26,7 @@ const int noButtonsOnJoystick = 30;
 // Create Joystick object
 
 Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,
-                   JOYSTICK_TYPE_MULTI_AXIS, noButtonsOnJoystick + 2, 0,     // Buttons, d-pads
+                   JOYSTICK_TYPE_JOYSTICK, noButtonsOnJoystick + 2, 0,     // Buttons, d-pads
                    true, true, true, true, true, true,   // X, Y, Z, Rx, Ry, Rz
                    true, true, false, false, false);     // Rudder see§ms to be same as one of the rotations
 
@@ -86,7 +86,7 @@ char data[100];
 int dataCurrentPosition = 0;
 bool readyToInterpret = false;
 
-DataHandler dataHandler(12);
+DataHandler dataHandler(4);
 
 //Setup Gamestate object
 GameState gameState;

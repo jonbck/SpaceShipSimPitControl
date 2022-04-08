@@ -2,7 +2,7 @@
 
 //ToDo: Add support for latching buttons
 
-SubController::SubController(int type, int pin, int a = false, int b = false, int c = false, int d = false){
+SubController::SubController(int type, int pin = false, int a = false, int b = false, int c = false, int d = false){
   this->type = type;
   this->pin = pin;
   this->current = 0;
@@ -14,6 +14,16 @@ SubController::SubController(int type, int pin, int a = false, int b = false, in
     this->midlow = b;
     this->midhigh = c;
     this->high = d;
+  }
+
+  if(this->type == JOY_MULTIBUTTON){
+    this->low = a;
+    this->high = b;
+  }
+
+  if(this->type == JOY_MULTIBUTTON){
+    this->inputHasChanged = false;
+    pinMode(this->pin, INPUT);
   }
 
   if(this->type == JOY_BUTTON){
@@ -80,6 +90,19 @@ void SubController::readValue(){
     // Add different assignment according to button type (swich/momentary/moment2switch etc)
     if(sensorValue != this->current){
       this->current = sensorValue;
+      this->inputHasChanged = true;
+    }
+  }else if(this->type == JOY_MULTIBUTTON){
+    int sensorValue;
+    bool newValue;
+    sensorValue = analogRead(this->pin);
+    if(sensorValue >= this->low && sensorValue <= this->high){
+      newValue = true;
+    }else{
+      newValue = false;
+    }
+    if(newValue != this->current){
+      this->current = newValue;
       this->inputHasChanged = true;
     }
   }else if(this->type == JOY_STICK){

@@ -3,6 +3,8 @@
 #define JOY_BUTTON 2
 #define JOY_LED 3
 #define JOY_DATA_LED 4
+#define JOY_MULTIBUTTON 5
+#define JOY_DATA 6
 
 #define JOY_LED_ON 1
 #define JOY_LED_OFF 0
@@ -28,7 +30,7 @@ class SubController {
     int animationFrame;
     
   public:
-    SubController(int type, int pin, int low = 0, int midlow = 0, int midhigh = 0, int high = 0);
+    SubController(int type, int pin = false, int low = 0, int midlow = 0, int midhigh = 0, int high = 0);
     void getPin();
     int getValue();
     bool hasChanged();

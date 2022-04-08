@@ -2,11 +2,12 @@
 #define SUB_CONTROLLER 8
 #define SUB_CONTROLLER_FSD 8
 #define SUB_CONTROLLER_HARDPOINTS 9
+#define SUB_CONTROLLER_POWER_DISTRIBUTION 10
 
 class DataHandler {
   
   private:
-    int example;
+    int maxMessageSize;
     
   public:
     bool a = false;
@@ -17,11 +18,12 @@ class DataHandler {
     bool f = false;
     bool g = false;
     bool h = false;
+    byte message[];
     
-    DataHandler(int example);
-    int setExample(int example);
+    DataHandler(int maxMessageSize);
     void DataHandler::receiveEvent(int bytesReceived);
     void DataHandler::replyEvent(int bytes);
     void DataHandler::request(int device, int bytes);
-    void DataHandler::transmit();
+    void DataHandler::transmit(int device, int messageSize = 0);
+    void DataHandler::clearData();
 };
