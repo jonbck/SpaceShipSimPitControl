@@ -33,7 +33,7 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,
 JoyInput stickX(JOY_STICK, A0, 0, 490, 530, 1020);  // 0; 512; 1023
 JoyInput stickY(JOY_STICK, A1, 1020, 560, 520, 0);  // 0; 539; 1023
 JoyInput stickZ(JOY_STICK, A2, 0, 310, 350, 770);  // 0; 329; 770
-JoyInput stickRx(JOY_STICK, A3, 0, 435, 470, 1020); // 0; 513; 1023
+JoyInput stickRx(JOY_STICK, A3, 0, 500, 535, 1020); // 0; 503-530; 1023
 JoyInput stickRy(JOY_STICK, A4, 0, 520, 560, 1020); // 0; 537; 1023
 JoyInput stickRz(JOY_STICK, A5, 0, 420, 470, 810); // 0; 445; 812
 JoyInput stickThrottle(JOY_STICK, A6, 350, 531, 532, 720); // 333; 531; 532; 729
@@ -42,7 +42,6 @@ JoyInput stickThrottle(JOY_STICK, A6, 350, 531, 532, 720); // 333; 531; 532; 729
 JoyInput buttonF1(JOY_BUTTON, 5);
 JoyInput buttonF2(JOY_BUTTON, 6);
 //Distance buttons
-
 
 
 class VirtuJoyButtons {
@@ -77,7 +76,7 @@ class VirtuJoyButtons {
     }
 };
 
-VirtuJoyButtons buttons[30];
+VirtuJoyButtons buttons[noButtonsOnJoystick];
 
 // Setup Node RED connections
 //Data gatherer
@@ -132,12 +131,25 @@ void loop() {
   buttons[4].setValue(dataHandler.a);
   buttons[5].setValue(dataHandler.b);
   gameState.controllerArm1 = dataHandler.c;
-  gameState.controllerArm1 = dataHandler.d;
+  gameState.controllerArm2 = dataHandler.d;
   buttons[6].setValue(dataHandler.e);
-  buttons[7].setValue(dataHandler.f);
+  if(gameState.hudInAnalysis == dataHandler.f){
+    buttons[7].setValue(!dataHandler.f);
+  }
   buttons[8].setValue(dataHandler.g);
   buttons[9].setValue(dataHandler.h);
   
+  dataHandler.request(SUB_CONTROLLER_POWER_DISTRIBUTION, 2);
+  buttons[10].setValue(dataHandler.a);
+  buttons[11].setValue(dataHandler.b);
+  buttons[12].setValue(dataHandler.c);
+  buttons[13].setValue(dataHandler.d);
+  buttons[14].setValue(dataHandler.e);
+  buttons[15].setValue(dataHandler.f);
+  buttons[16].setValue(dataHandler.g);
+  buttons[17].setValue(dataHandler.h);
+  buttons[18].setValue(dataHandler.message[1]);
+
   //Do this for every device
   //Either just add it to the joystick, or add a function to detect changes and then add it to the joystick.
 
@@ -169,6 +181,7 @@ void loop() {
   Wire.write(sendByte);              // sends one byte
   Wire.endTransmission();    // stop transmitting
 
+  //HARDPOINTS
   sendByte = 0;
   sendByte =  (gameState.hudInAnalysis * 1) +
               (gameState.hardpointsDeployed * 2) +
@@ -179,6 +192,21 @@ void loop() {
   Wire.write(sendByte);              // sends one byte
   Wire.endTransmission();    // stop transmitting
 
+
+
+  //POWER DISTRIBUTION
+  sendByte = 0;
+  sendByte =  (0 * 1) +                               // Power distribution Light
+              (0 * 2) +                               // Engine Boost Light
+              (gameState.silentRunning * 4);
+
+  Wire.beginTransmission(SUB_CONTROLLER_POWER_DISTRIBUTION); // transmit to device
+  Wire.write(sendByte);              // sends one byte
+  Wire.write(gameState.pipsSys);              // sends one byte
+  Wire.write(gameState.pipsEng);              // sends one byte
+  Wire.write(gameState.pipsWep);              // sends one byte
+  Wire.endTransmission();    // stop transmitting
+  
 
   //Serial.println(gameState.isDocked());
   //Serial.println(gameState.fireGroup);
@@ -290,6 +318,10 @@ void gameStateFromNodeRED() {
         Serial.println(" ]");
         
         gameState.interpretSerialData(key, val);      // Function in Game State
+        Serial.print(gameState.pipsSys);
+        Serial.print(gameState.pipsEng);
+        Serial.println(gameState.pipsWep);
+
       }
       for(int i = 0; i < arr_len(data); i++){
         data[i] = ' ';

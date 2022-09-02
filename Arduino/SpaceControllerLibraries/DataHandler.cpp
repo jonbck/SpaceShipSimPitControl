@@ -71,6 +71,22 @@ void DataHandler::request(int device, int bytes = 1){
     this->f = received & 32;
     this->g = received & 64;
     this->h = received & 128;
+  }else if(bytes > 1){
+    Wire.requestFrom(device, bytes);    // request 1 bytes from slave device #device
+    int i = 0;
+    while (Wire.available()) { // only keep last byte
+      byte received = Wire.read(); // receive a byte as character
+      this->message[i] = received;
+      i++;
+    }
+    this->a = this->message[0] & 1;
+    this->b = this->message[0] & 2;
+    this->c = this->message[0] & 4;
+    this->d = this->message[0] & 8;
+    this->e = this->message[0] & 16;
+    this->f = this->message[0] & 32;
+    this->g = this->message[0] & 64;
+    this->h = this->message[0] & 128;
   }
   return false;
 }

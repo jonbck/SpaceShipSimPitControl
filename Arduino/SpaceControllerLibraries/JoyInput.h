@@ -19,6 +19,7 @@ class JoyInput {
     JoyInput(int type, int pin, int low = 0, int midlow = 0, int midhigh = 0, int high = 0);
     void getPin();
     int getValue();
+    int getSensorValue();
     bool hasChanged();
     void readValue();
     

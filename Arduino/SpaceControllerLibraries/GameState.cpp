@@ -72,4 +72,14 @@ void GameState::interpretSerialData(char* key, char* val){
   if(String(key).equalsIgnoreCase("firegroup")){
     this->fireGroup = String(val).toInt();
   }
+  if(String(key).equalsIgnoreCase("pipsSys")){
+    this->pipsSys = String(val).toInt();
+  }
+  if(String(key).equalsIgnoreCase("pipsWep")){
+    this->pipsWep = String(val).toInt();    
+  }
+  if(String(key).equalsIgnoreCase("pipsEng")){
+    this->pipsEng = String(val).toInt();
+  }
+
 }

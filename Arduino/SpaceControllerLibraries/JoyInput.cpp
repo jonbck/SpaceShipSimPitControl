@@ -24,6 +24,9 @@ void JoyInput::getPin(){
 int JoyInput::getValue(){
   return this->current;
 }
+int JoyInput::getSensorValue(){
+  return this->sensorvalue;
+}
 bool JoyInput::hasChanged(){
   if(this->inputHasChanged){
     this->inputHasChanged = false;

@@ -5,9 +5,9 @@
 SubController systemPower(JOY_DATA);
 SubController enginePower(JOY_DATA);
 SubController weaponsPower(JOY_DATA);
-SubController balacePowerDistributionLight(JOY_DATA_LED, 13);
-SubController engineBoostLight(JOY_DATA_LED, 11);
-SubController silentRunningLight(JOY_DATA_LED, 12);
+SubController balacePowerDistributionLight(JOY_DATA_LED, 11);
+SubController engineBoostLight(JOY_DATA_LED, 12);
+SubController silentRunningLight(JOY_DATA_LED, 13);
 
 SubController maxToSystemButton(JOY_MULTIBUTTON, A1, 0, 50);
 SubController maxToEnginesButton(JOY_MULTIBUTTON, A2, 0, 50);
@@ -26,7 +26,7 @@ void setup() {
   Wire.begin(SUB_CONTROLLER_POWER_DISTRIBUTION);
   Wire.onReceive(receiveEvent);
   Wire.onRequest(requestEvent);
-  Serial.begin(9600);
+  //Serial.begin(9600);
 
   //Set pinmode for matrix light rows and columns. (Light utput handled here, not in library)
   for(int i=0; i<11; i++){
@@ -37,22 +37,23 @@ void setup() {
 void loop() {
   //Read i2c (happens in interrupts)
   //Update accordingly
+
   
   //Animate special lights
   //Everything off
-  for(int col=8; col <11; col++){
+  for(int col=8; col<11; col++){
     digitalWrite(col, HIGH);
   }
   for(int row=0; row<8; row++){
         digitalWrite(row, LOW);
   }
-  
+ 
   //System
   digitalWrite(8, LOW);
-  for(int row=0; row<systemPower.getValue()+1; row++){
+  for(int row=0; row<systemPower.getValue(); row++){
     digitalWrite(row, HIGH);
   }
-  delay(1);
+  delay(5);
   digitalWrite(8, HIGH);
   for(int row=0; row<8; row++){
     digitalWrite(row, LOW);
@@ -60,10 +61,10 @@ void loop() {
 
   //Engine
   digitalWrite(9, LOW);
-  for(int row=0; row<enginePower.getValue()+1; row++){
+  for(int row=0; row<enginePower.getValue(); row++){
     digitalWrite(row, HIGH);
   }
-  delay(1);
+  delay(5);
   digitalWrite(9, HIGH);
   for(int row=0; row<8; row++){
     digitalWrite(row, LOW);
@@ -71,10 +72,10 @@ void loop() {
   
   //Weapons
   digitalWrite(10, LOW);
-  for(int row=0; row<weaponsPower.getValue()+1; row++){
+  for(int row=0; row<weaponsPower.getValue(); row++){
     digitalWrite(row, HIGH);
   }
-  delay(1);
+  delay(5);
   digitalWrite(9, HIGH);
   for(int row=0; row<8; row++){
     digitalWrite(row, LOW);
@@ -99,6 +100,7 @@ void loop() {
 }
 
 void receiveEvent(int bytesReceived) {
+
   dataHandler.receiveEvent(bytesReceived);
 
   balacePowerDistributionLight.setValue(dataHandler.a);
@@ -126,15 +128,5 @@ void requestEvent() {
   dataHandler.h = engineBoostButton.getValue();
   dataHandler.message[1] = silentRunningButton.getValue();
   
-  Serial.print(dataHandler.a);
-  Serial.print(dataHandler.b);
-  Serial.print(dataHandler.c);
-  Serial.print(dataHandler.d);
-  Serial.print(dataHandler.e);
-  Serial.print(dataHandler.f);
-  Serial.print(dataHandler.g);
-  Serial.print(dataHandler.h);
-  Serial.println(dataHandler.message[1]);
-
   dataHandler.replyEvent(2);
 }

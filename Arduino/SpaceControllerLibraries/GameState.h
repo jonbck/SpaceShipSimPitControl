@@ -32,11 +32,14 @@ class GameState{
     bool inMainShip;
     bool inFighter;
     bool inSrv;
-    bool hudInAnalysis;
+    bool hudInAnalysis = true;
     bool nightVision;
     bool fsdJump;
     bool srvHighBeam;
     byte fireGroup;
+    byte pipsSys;
+    byte pipsEng;
+    byte pipsWep;
 
     // Game controller variables
     bool controllerArm1 = false;
