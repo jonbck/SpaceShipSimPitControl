@@ -31,7 +31,7 @@ class SubController {
     
   public:
     SubController(int type, int pin = false, int low = 0, int midlow = 0, int midhigh = 0, int high = 0);
-    void getPin();
+    int getPin();
     int getValue();
     bool hasChanged();
     void readValue();

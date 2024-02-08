@@ -208,8 +208,15 @@ void loop() {
   Wire.endTransmission();    // stop transmitting
   
 
-  //Serial.println(gameState.isDocked());
-  //Serial.println(gameState.fireGroup);
+  //EXTERNAL
+  sendByte = 0;
+  sendByte =  (gameState.isInDanger * 1) +
+              (gameState.overHeating * 2);
+
+  Wire.beginTransmission(SUB_CONTROLLER_BOARD_EXTERNAL); // transmit to device #8
+  Wire.write(sendByte);              // sends one byte
+  Wire.endTransmission();    // stop transmitting
+
 
   delay(50);
 }
