@@ -37,7 +37,7 @@ SubController::SubController(int type, int pin = false, int a = false, int b = f
   }
 
 }
-void SubController::getPin(){
+int SubController::getPin(){
   return this->pin;
 }
 

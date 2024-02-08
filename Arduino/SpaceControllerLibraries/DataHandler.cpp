@@ -104,12 +104,11 @@ void DataHandler::transmit(int device, int messageSize = 0){
                 (this->g * 64) +
                 (this->h * 128);
   }
+  Serial.println(message[0]);
   Wire.beginTransmission(device); // transmit to device
   for(int i=0; i<messageSize; i++){
     Wire.write(this->message[i]); // sends one byte
-    Serial.print("x");
   }
-  Serial.println();
   Wire.endTransmission();    // stop transmitting
 }
 
