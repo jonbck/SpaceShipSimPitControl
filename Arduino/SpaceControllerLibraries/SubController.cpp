@@ -1,6 +1,12 @@
 #include "SubController.h"
 
-//ToDo: Add support for latching buttons
+/* ********** ToDo: **********
+ 
+Add support for latching buttons
+Fix lights for shift register leds
+Fix animation for shift register controlled stack of lights
+
+********** ********** */
 
 SubController::SubController(int type, int pin = false, int a = false, int b = false, int c = false, int d = false){
   this->type = type;
@@ -35,8 +41,8 @@ SubController::SubController(int type, int pin = false, int a = false, int b = f
     pinMode(this->pin, OUTPUT);
     this->ledMode = JOY_LED_OFF;
   }
-
 }
+
 int SubController::getPin(){
   return this->pin;
 }

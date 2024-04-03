@@ -150,6 +150,16 @@ void loop() {
   buttons[17].setValue(dataHandler.h);
   buttons[18].setValue(dataHandler.message[1]);
 
+dataHandler.request(SUB_CONTROLLER_FUEL, 1);
+  buttons[19].setValue(dataHandler.a);
+  buttons[20].setValue(dataHandler.b);
+  buttons[21].setValue(dataHandler.c);
+  buttons[22].setValue(dataHandler.d);
+  buttons[23].setValue(dataHandler.e);
+  buttons[24].setValue(dataHandler.f);
+  buttons[25].setValue(dataHandler.g);
+  buttons[26].setValue(dataHandler.h);
+
   //Do this for every device
   //Either just add it to the joystick, or add a function to detect changes and then add it to the joystick.
 
@@ -192,8 +202,6 @@ void loop() {
   Wire.write(sendByte);              // sends one byte
   Wire.endTransmission();    // stop transmitting
 
-
-
   //POWER DISTRIBUTION
   sendByte = 0;
   sendByte =  (0 * 1) +                               // Power distribution Light
@@ -207,7 +215,6 @@ void loop() {
   Wire.write(gameState.pipsWep);              // sends one byte
   Wire.endTransmission();    // stop transmitting
   
-
   //EXTERNAL
   sendByte = 0;
   sendByte =  (gameState.isInDanger * 1) +
@@ -217,6 +224,31 @@ void loop() {
   Wire.write(sendByte);              // sends one byte
   Wire.endTransmission();    // stop transmitting
 
+  // FUEL
+  byte sendByte = 0;
+  sendByte =  (gameState.docked * 1) +
+              (gameState.shieldsUp * 2) +
+              (gameState.scoopingFuel * 4) +
+              (gameState.flightAssistOff * 8) +
+              (gameState.silentRunning * 16) + 
+              (gameState.cargoScoopDeployed * 32) + 
+              (gameState.nightVision * 64) + 
+              (0 * 128); // Orbit lines not implemented in data gathering 
+
+  byte sendByte2 = 0;
+  sendByte2 = (gameState.landingGearDown * 1) + 
+              (gameState.lightsOn * 2);
+  if(gameState.inSrv && !gameState.srvHighBeam){
+    sendByte2 = sendByte2 + 4;
+  }
+  byte sendByte3 = 0;
+  // ADD CODE FOR SENDING AMOUNT OF FUEL
+
+  Wire.beginTransmission(SUB_CONTROLLER_FSD); // transmit to device #8
+  Wire.write(sendByte);              // sends one byte
+  Wire.write(sendByte2);              // sends one byte
+  Wire.write(sendByte3);              // sends one byte
+  Wire.endTransmission();    // stop transmitting
 
   delay(50);
 }
