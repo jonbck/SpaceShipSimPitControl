@@ -10,8 +10,8 @@ DataHandler dataHandler(12);
 long timestamp;
 long triggerTime = 0;
 
-const long fireLength = 12000;					// 12 sek
-const long fireCooldownLength = 300000;	// 5 min
+const long fireLength = 1000;					// 1 sek
+const long fireCooldownLength = 10000;	// 10 sek
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
