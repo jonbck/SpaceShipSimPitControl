@@ -40,6 +40,8 @@ class GameState{
     byte pipsSys;
     byte pipsEng;
     byte pipsWep;
+    byte fuelTank;
+    bool orbitalLines;
 
     // Game controller variables
     bool controllerArm1 = false;

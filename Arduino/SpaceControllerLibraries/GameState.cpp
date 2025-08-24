@@ -81,5 +81,11 @@ void GameState::interpretSerialData(char* key, char* val){
   if(String(key).equalsIgnoreCase("pipsEng")){
     this->pipsEng = String(val).toInt();
   }
+  if(String(key).equalsIgnoreCase("fuelTank")){
+    this->fuelTank = String(val).toInt();
+  }
+  if(String(key).equalsIgnoreCase("orbitalLines")){
+    this->orbitalLines = String(val).toInt();
+  }
 
 }

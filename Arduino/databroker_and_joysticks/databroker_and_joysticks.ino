@@ -187,7 +187,7 @@ dataHandler.request(SUB_CONTROLLER_FUEL, 1);
               (gameState.superCruice * 8) +
               (gameState.fsdJump * 16);
 
-  Wire.beginTransmission(SUB_CONTROLLER_FSD); // transmit to device #8
+  Wire.beginTransmission(SUB_CONTROLLER_FSD); // transmit to device
   Wire.write(sendByte);              // sends one byte
   Wire.endTransmission();    // stop transmitting
 
@@ -198,7 +198,7 @@ dataHandler.request(SUB_CONTROLLER_FUEL, 1);
               (gameState.controllerArm1 * 4) +
               (gameState.controllerArm2 * 8);
 
-  Wire.beginTransmission(SUB_CONTROLLER_HARDPOINTS); // transmit to device #8
+  Wire.beginTransmission(SUB_CONTROLLER_HARDPOINTS); // transmit to device
   Wire.write(sendByte);              // sends one byte
   Wire.endTransmission();    // stop transmitting
 
@@ -207,7 +207,7 @@ dataHandler.request(SUB_CONTROLLER_FUEL, 1);
   sendByte =  (0 * 1) +                               // Power distribution Light
               (0 * 2) +                               // Engine Boost Light
               (gameState.silentRunning * 4);
-
+  
   Wire.beginTransmission(SUB_CONTROLLER_POWER_DISTRIBUTION); // transmit to device
   Wire.write(sendByte);              // sends one byte
   Wire.write(gameState.pipsSys);              // sends one byte
@@ -219,13 +219,13 @@ dataHandler.request(SUB_CONTROLLER_FUEL, 1);
   sendByte = 0;
   sendByte =  (gameState.isInDanger * 1) +
               (gameState.overHeating * 2);
-
-  Wire.beginTransmission(SUB_CONTROLLER_BOARD_EXTERNAL); // transmit to device #8
+  
+  Wire.beginTransmission(SUB_CONTROLLER_BOARD_EXTERNAL); // transmit to device
   Wire.write(sendByte);              // sends one byte
   Wire.endTransmission();    // stop transmitting
 
   // FUEL
-  byte sendByte = 0;
+  sendByte = 0;
   sendByte =  (gameState.docked * 1) +
               (gameState.shieldsUp * 2) +
               (gameState.scoopingFuel * 4) +
@@ -233,7 +233,7 @@ dataHandler.request(SUB_CONTROLLER_FUEL, 1);
               (gameState.silentRunning * 16) + 
               (gameState.cargoScoopDeployed * 32) + 
               (gameState.nightVision * 64) + 
-              (0 * 128); // Orbit lines not implemented in data gathering 
+              (gameState.orbitalLines * 128); 
 
   byte sendByte2 = 0;
   sendByte2 = (gameState.landingGearDown * 1) + 
@@ -241,10 +241,10 @@ dataHandler.request(SUB_CONTROLLER_FUEL, 1);
   if(gameState.inSrv && !gameState.srvHighBeam){
     sendByte2 = sendByte2 + 4;
   }
-  byte sendByte3 = 0;
-  // ADD CODE FOR SENDING AMOUNT OF FUEL
 
-  Wire.beginTransmission(SUB_CONTROLLER_FSD); // transmit to device #8
+  byte sendByte3 = gameState.fuelTank;
+
+  Wire.beginTransmission(SUB_CONTROLLER_FUEL); // transmit to device
   Wire.write(sendByte);              // sends one byte
   Wire.write(sendByte2);              // sends one byte
   Wire.write(sendByte3);              // sends one byte

@@ -51,7 +51,7 @@ void setup() {
   Wire.onReceive(receiveEvent);
   Wire.onRequest(requestEvent);
   Serial.begin(9600);
-
+ 
   //Set up shiftregister out
   pinMode(dataPin, OUTPUT);  
   pinMode(clockPin, OUTPUT);
@@ -72,7 +72,7 @@ void loop() {
   //Animate special lights
 
   //Set Fuel Gauge
-  int fuel = map(fuelGaugeMeter.getValue(), 0, 100, 0, 9);
+  int fuel = map(fuelGaugeMeter.getValue(), 0, 255, 0, 9);
 
   bitClear(shiftRegLeds[1],0);  // Set bit 9 to 0
 

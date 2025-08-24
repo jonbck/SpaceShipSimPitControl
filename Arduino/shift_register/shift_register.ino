@@ -49,10 +49,12 @@ void setup(){
 void loop(){
   if (tmp == 0){
     tmp = 1;
-    bitSet(leds[0],1);
+    //bitSet(leds[0],1);
+    leds[2] = 255;
   }else{
     tmp = 0;
-   bitClear(leds[0],1);
+   //bitClear(leds[0],1);
+   leds[2] = 0;
   }
 
   digitalWrite(latchPin, LOW);
@@ -72,6 +74,6 @@ void loop(){
   Serial.print(digitalRead(13));
   Serial.println();
 
-  delay(10);
+  delay(500);
 
 }
